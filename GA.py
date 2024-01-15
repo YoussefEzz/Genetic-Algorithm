@@ -3,23 +3,28 @@ import random
 
 #Genetic Algorithm Class for the travelling Salesman Problem(TSP)
 class GeneticAlgorithm:
-  def __init__(self, cities, weights, start_city, population_size):
+  def __init__(self, cities, weights, start_city, population_size, num_generations):
 
-    self.cities = cities                    # list of indices of G cities
-    self.distances = weights                # list of lists representing matrix of distances between cities
-    self.start_city = start_city            # index of start city or node
-    self.population_size = population_size  # population size
-    self.chromosome_length = len(self.cities) + 1
+    self.cities = cities                            # list of indices of G cities
+    self.distances = weights                        # list of lists representing matrix of distances between cities
+    self.start_city = start_city                    # index of start city or node
+    self.population_size = population_size          # population size
+    self.chromosome_length = len(self.cities) + 1   # chromosome length is the number of cities G + 1
+    self.num_generations = num_generations          # number of generations or epochs
 
-    self.population = []                    # a list of lists for population of individuals
+    self.population = []                            # a list of lists for population of individuals
     for _ in range(self.population_size):
-      individual = [0] * self.chromosome_length    # Create a sublist with zeros
+      individual = [0] * self.chromosome_length     
       self.population.append(individual)
 
-    self.population_fitness = []                       # fitness list which contains the fitness for each individual in the chromosome 
+    self.population_fitness = []                    # fitness list which contains the fitness for each individual in the population
     for _ in range(self.population_size):
       self.population_fitness.append(0)
     
+    self.population_rank = []                       # rank list which contains the rank calculated in rank selection for each individual in the population 
+    for _ in range(self.population_size):
+      self.population_rank.append(0)
+
   # Initialize Population P
   def initialize_population(self):
     cities_except_first = self.cities
@@ -38,7 +43,7 @@ class GeneticAlgorithm:
   # Evaluate fitness for all chromosomes in P
   def evaluate_fitness(self):
     for i in range(self.population_size):
-        self.population_fitness[i] = self.fitness(self.population[i])
+        self.population_fitness[i] = 100 / self.fitness(self.population[i])
 
   # fitness function will return the sum of distances between every two consecutive cities in the chromosome  
   def fitness(self, chromosome):
@@ -48,3 +53,8 @@ class GeneticAlgorithm:
         city_B = chromosome[i+1]
         fitness += self.distances[city_A][city_B]
     return fitness
+  
+
+  # rank function will return the rank of every individual based on it's fitness  
+  def evaluate_rank(self):
+    self.population_rank = [i[0] for i in sorted(enumerate(self.population_fitness), key=lambda x: x[1])]
