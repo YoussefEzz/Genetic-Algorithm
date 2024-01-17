@@ -55,20 +55,51 @@ class GeneticAlgorithm:
     return fitness
   
 
-  # rank function will return the rank of every individual based on it's fitness  
-  def evaluate_rank(self):
-    self.population_rank = [i[0] for i in sorted(enumerate(self.population_fitness), key=lambda x: x[1])]
-
   # rank selection function will return the indices of selected chromosomes
   def rank_selection(self):
-    self.evaluate_rank()
+
+    # compute the rank for each chromosome based on it's fitness by sorting individuals by increasing fitness
+    population_rank = [i[0] for i in sorted(enumerate(self.population_fitness), key=lambda x: x[1])]
     
-    # select 2 chromosomes from population based on rank selection
-    rank_weights = [element / sum(self.population_rank) for element in self.population_rank]
-    print("rank weights: ", rank_weights)
+    
+    rank_probabilities = [element / sum(population_rank) for element in population_rank]
+    #print("rank weights: ", rank_probabilities)
 
-
-    selected_chromosomes = np.random.choice(len(self.population), 2, replace=False, p=rank_weights)
-    print("selected chromosomes :", selected_chromosomes)
+    # select 2 chromosomes from population based on rank selection with Probability of selection proportional to rank
+    selected_chromosomes = np.random.choice(len(self.population), 2, replace=False, p=rank_probabilities)
+    #print("selected chromosomes :", selected_chromosomes)
 
     return selected_chromosomes
+  
+
+  # tournament selection function will return the indices of selected chromosomes
+  def tournament_selection(self):
+    
+    population_rank = [i[0] for i in sorted(enumerate(self.population_fitness), key=lambda x: x[1])]
+
+    # Select at random 3 individuals to get candidates for first parent
+    candidates_firstparent = np.random.choice(len(self.population), 3, replace=False)
+    
+    # Select at random 3 individuals to get candidates for second parent
+    candidates_secondparent = np.random.choice(len(self.population), 3, replace=False)
+
+    index_firstparent = -1
+    fitness_firstparent = 0
+    for i in range(len(self.population_fitness)):
+      for j in (candidates_firstparent):  
+        if i == j:
+          if self.population_fitness[i] > fitness_firstparent:
+            fitness_firstparent = self.population_fitness[i]
+            index_firstparent = i
+
+    index_secondparent = -1
+    fitness_secondparent = 0
+    for i in range(len(self.population_fitness)):
+      for j in (candidates_secondparent):  
+        if i == j:
+          if self.population_fitness[i] > fitness_secondparent:
+            fitness_secondparent = self.population_fitness[i]
+            index_secondparent = i
+
+    return [index_firstparent, index_secondparent]
+
