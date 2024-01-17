@@ -58,3 +58,17 @@ class GeneticAlgorithm:
   # rank function will return the rank of every individual based on it's fitness  
   def evaluate_rank(self):
     self.population_rank = [i[0] for i in sorted(enumerate(self.population_fitness), key=lambda x: x[1])]
+
+  # rank selection function will return the indices of selected chromosomes
+  def rank_selection(self):
+    self.evaluate_rank()
+    
+    # select 2 chromosomes from population based on rank selection
+    rank_weights = [element / sum(self.population_rank) for element in self.population_rank]
+    print("rank weights: ", rank_weights)
+
+
+    selected_chromosomes = np.random.choice(len(self.population), 2, replace=False, p=rank_weights)
+    print("selected chromosomes :", selected_chromosomes)
+
+    return selected_chromosomes
