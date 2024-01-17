@@ -103,3 +103,14 @@ class GeneticAlgorithm:
 
     return [index_firstparent, index_secondparent]
 
+
+  # one-point crossover function 
+  def onepoint_crossover(self, index_firstparent, index_secondparent):
+    firstparent = self.population[index_firstparent]
+    secondparent = self.population[index_secondparent]
+
+    crossover_point = random.randint(1, self.chromosome_length - 2)
+
+    firstoffspring = firstparent[0 : crossover_point] + secondparent[crossover_point : self.chromosome_length]
+    secondoffspring = secondparent[0 : crossover_point] + firstparent[crossover_point : self.chromosome_length]
+    return [firstoffspring, secondoffspring]
