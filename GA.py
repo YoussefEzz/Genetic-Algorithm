@@ -104,7 +104,7 @@ class GeneticAlgorithm:
     return [index_firstparent, index_secondparent]
 
 
-  # one-point crossover function 
+  # one-point crossover function not used in algorithm
   def onepoint_crossover(self, index_firstparent, index_secondparent):
     firstparent = self.population[index_firstparent]
     secondparent = self.population[index_secondparent]
@@ -115,7 +115,7 @@ class GeneticAlgorithm:
     secondoffspring = secondparent[0 : crossover_point] + firstparent[crossover_point : self.chromosome_length]
     return [firstoffspring, secondoffspring]
 
-# partially-mapped crossover(PMX) function 
+  # partially-mapped crossover(PMX) function 
   def partially_mapped_crossover(self, index_firstparent, index_secondparent):
     parent1 = self.population[index_firstparent]
     parent2 = self.population[index_secondparent]
@@ -124,8 +124,8 @@ class GeneticAlgorithm:
     child2 = [None] * self.chromosome_length
 
     # Select two random crossover points
-    crossover_point1 = random.randint(0, self.chromosome_length - 1)
-    crossover_point2 = random.randint(0, self.chromosome_length - 1)
+    crossover_point1 = random.randint(1, self.chromosome_length - 2)
+    crossover_point2 = random.randint(1, self.chromosome_length - 2)
     if crossover_point1 > crossover_point2:
         crossover_point1, crossover_point2 = crossover_point2, crossover_point1
 
@@ -156,7 +156,21 @@ class GeneticAlgorithm:
 
     return child1, child2
 
+  # swap cities with random indices except first and last 
+  def swap_mutation(self, chromosome):
+   
+    # Select two random positions in the chromosome
+    position1 = random.randint(1, len(chromosome) - 2)
+    position2 = random.randint(1, len(chromosome) - 2)
+    
+    # Swap the cities at the selected positions
+    chromosome[position1], chromosome[position2] = chromosome[position2], chromosome[position1]
+    
+    return chromosome
 
-    return 
+# # Example usage
+# chromosome = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+# mutated_chromosome = swap_mutation(chromosome) 
 
 
