@@ -114,3 +114,49 @@ class GeneticAlgorithm:
     firstoffspring = firstparent[0 : crossover_point] + secondparent[crossover_point : self.chromosome_length]
     secondoffspring = secondparent[0 : crossover_point] + firstparent[crossover_point : self.chromosome_length]
     return [firstoffspring, secondoffspring]
+
+# partially-mapped crossover(PMX) function 
+  def partially_mapped_crossover(self, index_firstparent, index_secondparent):
+    parent1 = self.population[index_firstparent]
+    parent2 = self.population[index_secondparent]
+
+    child1 = [None] * self.chromosome_length
+    child2 = [None] * self.chromosome_length
+
+    # Select two random crossover points
+    crossover_point1 = random.randint(0, self.chromosome_length - 1)
+    crossover_point2 = random.randint(0, self.chromosome_length - 1)
+    if crossover_point1 > crossover_point2:
+        crossover_point1, crossover_point2 = crossover_point2, crossover_point1
+
+    # Copy the selected portion from parents to children
+    child1[crossover_point1:crossover_point2+1] = parent1[crossover_point1:crossover_point2+1]
+    child2[crossover_point1:crossover_point2+1] = parent2[crossover_point1:crossover_point2+1]
+
+    # Map the elements between crossover points
+    for i in range(crossover_point1, crossover_point2+1):
+        if parent2[i] not in child1:
+            index = parent2.index(parent1[i])
+            while child1[index] is not None:
+                index = parent2.index(parent1[index])
+            child1[index] = parent2[i]
+
+        if parent1[i] not in child2:
+            index = parent1.index(parent2[i])
+            while child2[index] is not None:
+                index = parent1.index(parent2[index])
+            child2[index] = parent1[i]
+
+    # Copy the remaining elements
+    for i in range(self.chromosome_length):
+        if child1[i] is None:
+            child1[i] = parent2[i]
+        if child2[i] is None:
+            child2[i] = parent1[i]
+
+    return child1, child2
+
+
+    return 
+
+
