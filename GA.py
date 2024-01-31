@@ -3,7 +3,7 @@ import random
 
 #Genetic Algorithm Class for the travelling Salesman Problem(TSP)
 class GeneticAlgorithm:
-  def __init__(self, cities, weights, start_city, population_size, num_generations):
+  def __init__(self, cities, weights, start_city, population_size, num_generations, selection):
 
     self.cities = cities                            # list of indices of G cities
     self.distances = weights                        # list of lists representing matrix of distances between cities
@@ -31,27 +31,27 @@ class GeneticAlgorithm:
     cities_except_first.remove(self.start_city)
 
     for i in range(self.population_size):
-        # Shuffle the list
-        shuffled_list = cities_except_first[:]  # Create a copy of the original list
-        random.shuffle(shuffled_list)
+      # Shuffle the list
+      shuffled_list = cities_except_first[:]  # Create a copy of the original list
+      random.shuffle(shuffled_list)
 
-        chromosome = shuffled_list
-        chromosome.insert(0, self.start_city)   # append start city at the beginning
-        chromosome.append(self.start_city)      # append start city at the end
-        self.population[i] =  chromosome
+      chromosome = shuffled_list
+      chromosome.insert(0, self.start_city)   # append start city at the beginning
+      chromosome.append(self.start_city)      # append start city at the end
+      self.population[i] =  chromosome
 
   # Evaluate fitness for all chromosomes in P
   def evaluate_fitness(self):
     for i in range(self.population_size):
-        self.population_fitness[i] = 100 / self.fitness(self.population[i])
+      self.population_fitness[i] = 100 / self.fitness(self.population[i])
 
   # fitness function will return the sum of distances between every two consecutive cities in the chromosome  
   def fitness(self, chromosome):
     fitness = 0
     for i in range(len(chromosome) - 1):
-        city_A = chromosome[i]
-        city_B = chromosome[i+1]
-        fitness += self.distances[city_A][city_B]
+      city_A = chromosome[i]
+      city_B = chromosome[i+1]
+      fitness += self.distances[city_A][city_B]
     return fitness
   
 
@@ -75,7 +75,7 @@ class GeneticAlgorithm:
   # tournament selection function will return the indices of selected chromosomes
   def tournament_selection(self):
     
-    population_rank = [i[0] for i in sorted(enumerate(self.population_fitness), key=lambda x: x[1])]
+    #population_rank = [i[0] for i in sorted(enumerate(self.population_fitness), key=lambda x: x[1])]
 
     # Select at random 3 individuals to get candidates for first parent
     candidates_firstparent = np.random.choice(len(self.population), 3, replace=False)
@@ -130,11 +130,11 @@ class GeneticAlgorithm:
         crossover_point1, crossover_point2 = crossover_point2, crossover_point1
 
     # Copy the selected portion from parents to children
-    child1[crossover_point1:crossover_point2+1] = parent1[crossover_point1:crossover_point2+1]
-    child2[crossover_point1:crossover_point2+1] = parent2[crossover_point1:crossover_point2+1]
+    child1[crossover_point1:crossover_point2 + 1] = parent1[crossover_point1:crossover_point2 + 1]
+    child2[crossover_point1:crossover_point2 + 1] = parent2[crossover_point1:crossover_point2 + 1]
 
     # Map the elements between crossover points
-    for i in range(crossover_point1, crossover_point2+1):
+    for i in range(crossover_point1, crossover_point2 + 1):
         if parent2[i] not in child1:
             index = parent2.index(parent1[i])
             while child1[index] is not None:
@@ -168,9 +168,47 @@ class GeneticAlgorithm:
     
     return chromosome
 
-# # Example usage
-# chromosome = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-# mutated_chromosome = swap_mutation(chromosome) 
+  # The Genetic Algorithm 
+  def run(self):
+
+    # initialize population P
+    self.initialize_population()
+
+    # Evaluate fitness of all individuals in P
+    self.evaluate_fitness()
+
+    # loop over num_generations
+    for i in range(0, self.num_generations):
+      self.temp_population = []                            # a list of lists for population P' of individuals
+
+      # # loop to initialize population P'
+      # for _ in range(self.population_size):
+      #   individual = [0] * self.chromosome_length     
+      #   self.temp_population.append(individual)
+
+      for pair in range(0, self.population_size/2):
+
+        # select two individuals from P 
+        crossover_parents_indices = self.tournament_selection()
+      
+        # partially-mapped crossover
+        pmx_crossover_childs = self.partially_mapped_crossover(crossover_parents_indices[0], crossover_parents_indices[1])
+
+        # swap mutation
+        mutated_chromosome1 = self.swap_mutation(pmx_crossover_childs[0])
+        mutated_chromosome2 = self.swap_mutation(pmx_crossover_childs[1])
+
+        self.temp_population.append(mutated_chromosome1)
+        self.temp_population.append(mutated_chromosome2)
+
+      #assign P' to P
+      self.population = self.temp_population
+
+      # Evaluate fitness of all individuals in P
+      self.evaluate_fitness()
+
+      
+    return
 
 
