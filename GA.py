@@ -43,16 +43,20 @@ class GeneticAlgorithm:
   # Evaluate fitness for all chromosomes in P
   def evaluate_fitness(self):
     for i in range(self.population_size):
-      self.population_fitness[i] = 100 / self.fitness(self.population[i])
+      self.population_fitness[i] = 100 / self.cost(self.population[i])
 
-  # fitness function will return the sum of distances between every two consecutive cities in the chromosome  
-  def fitness(self, chromosome):
-    fitness = 0
+  # cost function will return the sum of distances between every two consecutive cities in the chromosome  
+  def cost(self, chromosome):
+    cost = 0
     for i in range(len(chromosome) - 1):
       city_A = chromosome[i]
       city_B = chromosome[i+1]
-      fitness += self.distances[city_A][city_B]
-    return fitness
+
+      # city_A_index = self.cities.index(city_A)
+      # city_B_index = self.cities.index(city_B)
+
+      cost += self.distances[city_A][city_B]
+    return cost
   
 
   # rank selection function will return the indices of selected chromosomes
@@ -214,9 +218,12 @@ class GeneticAlgorithm:
     max_value = max(self.population_fitness)
     max_index = self.population_fitness.index(max_value)
 
-    print("The highest fitness is:", max_value)
-    print("The index of the highest fitness is:", max_index)
-    print("The chromosome of the highest fitness is:", self.population_fitness[max_index])
+    # print("The highest fitness is:", max_value)
+    # print("The index of the highest fitness is:", max_index)
+
+    reult_chromosome = self.population[max_index] 
+    print("The chromosome of the highest fitness is:", reult_chromosome)
+    print("it's minimal cost is:", self.cost(reult_chromosome))
     return max_index
 
 
