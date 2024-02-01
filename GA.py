@@ -11,6 +11,7 @@ class GeneticAlgorithm:
     self.population_size = population_size          # population size
     self.chromosome_length = len(self.cities) + 1   # chromosome length is the number of cities G + 1
     self.num_generations = num_generations          # number of generations or epochs
+    self.minimal_distance_progress = []
 
     self.population = []                            # a list of lists for population of individuals
     for _ in range(self.population_size):
@@ -213,6 +214,8 @@ class GeneticAlgorithm:
       # Evaluate fitness of all individuals in P
       self.evaluate_fitness()
 
+      #calculate the evolution of the minimum total traveling distance in each of the algorithm steps
+      self.calculate_minimal()
 
     # return the most fitting individual in P
     max_value = max(self.population_fitness)
@@ -222,8 +225,20 @@ class GeneticAlgorithm:
     # print("The index of the highest fitness is:", max_index)
 
     reult_chromosome = self.population[max_index] 
+    minimal_cost = self.cost(reult_chromosome)
     print("The chromosome of the highest fitness is:", reult_chromosome)
-    print("it's minimal cost is:", self.cost(reult_chromosome))
+    print("it's minimal cost is:", minimal_cost)
     return max_index
 
+  #evolution of the minimum total traveling distance
+  def calculate_minimal(self):
+    max_value = max(self.population_fitness)
+    max_index = self.population_fitness.index(max_value)
 
+    # print("The highest fitness is:", max_value)
+    # print("The index of the highest fitness is:", max_index)
+
+    reult_chromosome = self.population[max_index] 
+    minimal_cost = self.cost(reult_chromosome)
+    self.minimal_distance_progress.append(minimal_cost)
+    return 
