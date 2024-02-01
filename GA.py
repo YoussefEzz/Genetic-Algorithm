@@ -3,7 +3,7 @@ import random
 
 #Genetic Algorithm Class for the travelling Salesman Problem(TSP)
 class GeneticAlgorithm:
-  def __init__(self, cities, weights, start_city, population_size, num_generations, selection):
+  def __init__(self, cities, weights, start_city, population_size, num_generations):
 
     self.cities = cities                            # list of indices of G cities
     self.distances = weights                        # list of lists representing matrix of distances between cities
@@ -187,7 +187,8 @@ class GeneticAlgorithm:
       #   individual = [0] * self.chromosome_length     
       #   self.temp_population.append(individual)
 
-      for pair in range(0, self.population_size/2):
+      halfpopulation_size = int(self.population_size/2)
+      for pair in range(0, halfpopulation_size):
 
         # select two individuals from P 
         crossover_parents_indices = self.tournament_selection()
@@ -208,7 +209,14 @@ class GeneticAlgorithm:
       # Evaluate fitness of all individuals in P
       self.evaluate_fitness()
 
-      
-    return
+
+    # return the most fitting individual in P
+    max_value = max(self.population_fitness)
+    max_index = self.population_fitness.index(max_value)
+
+    print("The highest fitness is:", max_value)
+    print("The index of the highest fitness is:", max_index)
+    print("The chromosome of the highest fitness is:", self.population_fitness[max_index])
+    return max_index
 
 
